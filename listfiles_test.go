@@ -3,13 +3,13 @@ package main
 import "testing"
 
 func TestListFiles(t *testing.T) {
-	expected := []File{
+	expected := []*File{
 		NewFile("filesets/fileset1/file1"),
 		NewFile("filesets/fileset1/file3"),
 		NewFile("filesets/fileset1/sub/file1"),
 		NewFile("filesets/fileset1/sub/file2"),
 	}
-	actual := []File{}
+	actual := []*File{}
 
 	c := ListFiles("./filesets/fileset1")
 	for file := range c {
@@ -24,7 +24,7 @@ func TestListFiles(t *testing.T) {
 	}
 }
 
-func findInFiles(file File, expected []File) bool {
+func findInFiles(file *File, expected []*File) bool {
 	for _, file2 := range expected {
 		if file.Filename == file2.Filename {
 			return true
