@@ -20,13 +20,13 @@ type Config struct {
 		Access string
 	}
 	Backup map[string]*struct {
-		Region     MyAwsRegion
-		Path       string
-		Db         string
-		Exclude    []string
-		Include    []string
-		Aws_Access string
-		Aws_Secret string
+		Region    MyAwsRegion
+		Path      string
+		Db        string
+		Exclude   []string
+		Include   []string
+		AwsAccess string `gcfg:"aws-access"`
+		AwsSecret string `gcfg:"aws-secret"`
 	}
 }
 
@@ -90,18 +90,18 @@ func ReadConfig(configDef string) (*Config, error) {
 			return nil, fmt.Errorf("No db supplied for config `%s`", key)
 		}
 
-		if backup.Aws_Access != "" && backup.Aws_Secret == "" {
+		if backup.AwsAccess != "" && backup.AwsSecret == "" {
 			return nil, fmt.Errorf("AWS Access code suplied, but no AWS Secret for config `%s`", key)
 		}
 
-		if backup.Aws_Access == "" && backup.Aws_Secret != "" {
+		if backup.AwsAccess == "" && backup.AwsSecret != "" {
 			return nil, fmt.Errorf("AWS Secret suplied, but no AWS Access code for config `%s`", key)
 		}
 
-		if backup.Aws_Access == "" && backup.Aws_Secret == "" {
+		if backup.AwsAccess == "" && backup.AwsSecret == "" {
 			if cfg.Aws.Access != "" && cfg.Aws.Secret != "" {
-				backup.Aws_Access = cfg.Aws.Access
-				backup.Aws_Secret = cfg.Aws.Secret
+				backup.AwsAccess = cfg.Aws.Access
+				backup.AwsSecret = cfg.Aws.Secret
 			} else {
 				return nil, fmt.Errorf("No AWS credentials supplied for backup `%s`", key)
 			}

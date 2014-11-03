@@ -145,12 +145,12 @@ func TestAwsConfigInBackup(t *testing.T) {
 		t.Errorf("Unexpected error: %s", err)
 	}
 
-	if config.Backup["test"].Aws_Access != "123abcAccess" {
-		t.Errorf("Invalid AWS Access code `%s`, expected `%s`", config.Backup["test"].Aws_Access, "123abcAccess")
+	if config.Backup["test"].AwsAccess != "123abcAccess" {
+		t.Errorf("Invalid AWS Access code `%s`, expected `%s`", config.Backup["test"].AwsAccess, "123abcAccess")
 	}
 
-	if config.Backup["test"].Aws_Secret != "123abcSecret" {
-		t.Errorf("Invalid AWS Secret `%s`, expected `%s`", config.Backup["test"].Aws_Secret, "123abcSecret")
+	if config.Backup["test"].AwsSecret != "123abcSecret" {
+		t.Errorf("Invalid AWS Secret `%s`, expected `%s`", config.Backup["test"].AwsSecret, "123abcSecret")
 	}
 }
 
@@ -174,12 +174,12 @@ func TestAwsConfigFromGlobal(t *testing.T) {
 		t.Errorf("Unexpected error: %s", err)
 	}
 
-	if config.Backup["test"].Aws_Access != "abc123Access" {
-		t.Errorf("Invalid AWS Access code `%s`, expected `%s`", config.Backup["test"].Aws_Access, "abc123Access")
+	if config.Backup["test"].AwsAccess != "abc123Access" {
+		t.Errorf("Invalid AWS Access code `%s`, expected `%s`", config.Backup["test"].AwsAccess, "abc123Access")
 	}
 
-	if config.Backup["test"].Aws_Secret != "abc123Secret" {
-		t.Errorf("Invalid AWS Secret `%s`, expected `%s`", config.Backup["test"].Aws_Secret, "abc123Secret")
+	if config.Backup["test"].AwsSecret != "abc123Secret" {
+		t.Errorf("Invalid AWS Secret `%s`, expected `%s`", config.Backup["test"].AwsSecret, "abc123Secret")
 	}
 }
 
