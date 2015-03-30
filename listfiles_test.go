@@ -10,7 +10,8 @@ func TestListAllFiles(t *testing.T) {
 		NewFile("filesets/fileset1/sub/file2.txt"),
 	}
 
-	c := ListFiles("./filesets/fileset1", []string{}, []string{})
+	c := make(chan *File)
+	ListFiles("./filesets/fileset1", []string{}, []string{}, c)
 	checkFiles(t, c, expected)
 }
 
@@ -21,7 +22,20 @@ func TestListIncludeFiles(t *testing.T) {
 		NewFile("filesets/fileset1/sub/file2.txt"),
 	}
 
-	c := ListFiles("./filesets/fileset1", []string{"*.txt"}, []string{})
+	c := make(chan *File)
+	ListFiles("./filesets/fileset1", []string{"*.txt"}, []string{}, c)
+	checkFiles(t, c, expected)
+}
+
+func TestListIncludeFilesCaseInsensitive(t *testing.T) {
+	expected := []*File{
+		NewFile("filesets/fileset1/file1.txt"),
+		NewFile("filesets/fileset1/file3.txt"),
+		NewFile("filesets/fileset1/sub/file2.txt"),
+	}
+
+	c := make(chan *File)
+	ListFiles("./filesets/fileset1", []string{"*.TXT"}, []string{}, c)
 	checkFiles(t, c, expected)
 }
 
@@ -31,7 +45,8 @@ func TestListExcludeFiles(t *testing.T) {
 		NewFile("filesets/fileset1/sub/file2.txt"),
 	}
 
-	c := ListFiles("./filesets/fileset1", []string{}, []string{"*file1*"})
+	c := make(chan *File)
+	ListFiles("./filesets/fileset1", []string{}, []string{"*file1*"}, c)
 	checkFiles(t, c, expected)
 }
 
@@ -40,7 +55,8 @@ func TestListIncludeAndExcludeFiles(t *testing.T) {
 		NewFile("filesets/fileset1/file1.txt"),
 	}
 
-	c := ListFiles("./filesets/fileset1", []string{"*file1*"}, []string{"*.bin"})
+	c := make(chan *File)
+	ListFiles("./filesets/fileset1", []string{"*file1*"}, []string{"*.bin"}, c)
 	checkFiles(t, c, expected)
 }
 
@@ -60,7 +76,7 @@ func checkFiles(t *testing.T, c <-chan *File, expected []*File) {
 
 func findInFiles(file *File, expected []*File) bool {
 	for _, file2 := range expected {
-		if file.Filename == file2.Filename {
+		if file.Filename() == file2.Filename() {
 			return true
 		}
 	}
