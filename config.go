@@ -8,7 +8,8 @@ import (
 )
 
 /**
- * Main Config struct for program
+ * Config is the main Config struct
+ * for the program
  */
 type Config struct {
 	Threads struct {
@@ -31,7 +32,7 @@ type Config struct {
 }
 
 /**
- * Simple wrapper for aws.Region
+ * MyAwsRegion is a simple wrapper for aws.Region
  * Allowing us to add a custom unmarshal method
  */
 type MyAwsRegion struct {
@@ -39,8 +40,8 @@ type MyAwsRegion struct {
 }
 
 /**
- * Custom unmarshaller for MyAwsRegion
- * Look up region in aws.Regions map
+ * UnmarshalText is a custom unmarshaller for MyAwsRegion
+ * It looks up the region in aws.Regions map
  * @return error Returns error if region does not exist in aws.Regions
  */
 func (m *MyAwsRegion) UnmarshalText(text []byte) error {
@@ -55,7 +56,7 @@ func (m *MyAwsRegion) UnmarshalText(text []byte) error {
 }
 
 /**
- * Read config from a string
+ * ReadConfig reads config from a string
  * @param string The configuration definition
  * @return Config A Config struct, or nil if something went wrong
  * @return error Returns error if something went wrong. Config will be nil in this case.
@@ -69,6 +70,7 @@ func ReadConfig(configDef string) (*Config, error) {
 	if cfg.Threads.Hash < 1 {
 		return nil, fmt.Errorf("Need at least one hash thread")
 	}
+
 	if cfg.Threads.Upload < 1 {
 		return nil, fmt.Errorf("Need at least one upload thread")
 	}
