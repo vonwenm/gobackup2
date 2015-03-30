@@ -12,10 +12,13 @@ func TestHashFile(t *testing.T) {
 		"01b307acba4f54f55aafc33bb06bbbf6ca803e9a": NewFile("filesets/fileset1/sub/file2.txt"),
 	}
 
-	for hash, file := range files {
-		HashFile(file)
-		if hash != file.Hash {
-			t.Errorf("Hash for `%s` was expected to be `%s`, got `%s`", file.Filename, hash, file.Hash)
+	for expectedHash, file := range files {
+		actualHash, err := file.Hash()
+		if err != nil {
+			t.Errorf("Unexpected error when calculating hash for `%s`: %s", file.Filename(), err)
+		}
+		if actualHash != expectedHash {
+			t.Errorf("Hash for `%s` was expected to be `%s`, got `%s`", file.Filename(), expectedHash, actualHash)
 		}
 	}
 }
