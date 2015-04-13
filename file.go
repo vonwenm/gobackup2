@@ -17,7 +17,7 @@ type File struct {
 }
 
 /**
- * Newfile creates a new File instance
+ * NewFile creates a new File instance
  * @param string filename The filename
  */
 func NewFile(filename string) *File {
