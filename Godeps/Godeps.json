@@ -7,6 +7,10 @@
 			"Rev": "c2d3050044d05357eaf6c3547249ba57c5e235cb"
 		},
 		{
+			"ImportPath": "github.com/mattn/go-sqlite3",
+			"Rev": "13671e4dd3a82253232deba28caf53061be5be85"
+		},
+		{
 			"ImportPath": "github.com/rdwilliamson/aws",
 			"Rev": "bb944363e0294c51cb50777cfe8b8a1f71bf29e3"
 		}
