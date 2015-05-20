@@ -51,6 +51,14 @@ func (a *archive) ensureTables() error {
 }
 
 /**
+ * Retrieve the sql connection from the archive
+ * Used in tests. Do not use otherwise.
+ */
+func (a *archive) Connection() *sql.DB {
+	return a.conn
+}
+
+/**
  * AddFile adds a file to the archive
  */
 func (a *archive) AddFile(file *ArchivedFile) error {
@@ -73,6 +81,33 @@ func (a *archive) AddFile(file *ArchivedFile) error {
 	}
 
 	return nil
+}
+
+func (a *archive) ListFiles() ([]*ArchivedFile, error) {
+	stmt, err := a.conn.Prepare("SELECT f.hash, f.filename, f.is_deleted, u.amazon_id FROM file AS f INNER JOIN upload AS u ON f.hash=u.hash WHERE f.is_deleted=0")
+	if err != nil {
+		return nil, err
+	}
+
+	rows, err := stmt.Query()
+	if err != nil {
+		return nil, err
+	}
+
+	var files []*ArchivedFile
+	var hash, filename, amazonId string
+	var isDeleted bool
+	for rows.Next() {
+		rows.Scan(&hash, &filename, &isDeleted, &amazonId)
+		files = append(files, &ArchivedFile{
+			filename:  filename,
+			hash:      hash,
+			amazonId:  amazonId,
+			isDeleted: isDeleted,
+		})
+	}
+
+	return files, nil
 }
 
 /**
