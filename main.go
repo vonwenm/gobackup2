@@ -27,9 +27,14 @@ func main() {
 			continue
 		}
 
-		_, err = NewArchive(backup.Db)
+		archive, err = NewArchive(backup.Db)
 		if err != nil {
 			log.Printf("Error creating archive: %s", err)
+		}
+
+		files, err := archive.ListFiles()
+		for _, file := range files {
+
 		}
 	}
 }
