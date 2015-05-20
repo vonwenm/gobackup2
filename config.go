@@ -28,6 +28,7 @@ type Config struct {
 		Include   []string
 		AwsAccess string `gcfg:"aws-access"`
 		AwsSecret string `gcfg:"aws-secret"`
+		Vault     string
 	}
 }
 
@@ -90,6 +91,10 @@ func ReadConfig(configDef string) (*Config, error) {
 
 		if backup.Db == "" {
 			return nil, fmt.Errorf("No db supplied for config `%s`", key)
+		}
+
+		if backup.Vault == "" {
+			return nil, fmt.Errorf("No vault supplied for config `%s`", key)
 		}
 
 		if backup.AwsAccess != "" && backup.AwsSecret == "" {

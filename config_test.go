@@ -21,6 +21,7 @@ func TestBaseConfig(t *testing.T) {
     exclude = *.png
     exclude = *.tiff
     include = *.jpg
+    vault = test
 `
 
 	config, err := ReadConfig(configDef)
@@ -59,6 +60,10 @@ func TestBaseConfig(t *testing.T) {
 
 	if config.Backup["test"].Db != "tmp.db" {
 		t.Errorf("Invalid db `%s`, expected `%s`", config.Backup["test"].Db, "tmp.db")
+	}
+
+	if config.Backup["test"].Vault != "test" {
+		t.Errorf("Invalid vault `%s`, expected `%s`", config.Backup["test"].Vault, "test")
 	}
 
 	if !compareInclusions(config.Backup["test"].Exclude, []string{"*.png", "*.tiff"}) {
@@ -136,6 +141,7 @@ func TestAwsConfigInBackup(t *testing.T) {
     region = eu-west-1
     path = /tmp/
     db = tmp.db
+    vault = test
     aws-access = 123abcAccess
     aws-secret = 123abcSecret
 `
@@ -165,6 +171,7 @@ func TestAwsConfigFromGlobal(t *testing.T) {
     secret = abc123Secret
 
     [backup "test"]
+    vault = test
     region = eu-west-1
     path = /tmp/
     db = tmp.db
@@ -190,6 +197,7 @@ func TestNoAwsConfig(t *testing.T) {
     upload = 2
 
     [backup "test"]
+    vault = test
     region = eu-west-1
     path = /tmp/
     db = tmp.db
@@ -206,6 +214,7 @@ func TestAwsAccessOnly(t *testing.T) {
     upload = 2
 
     [backup "test"]
+    vault = test
     region = eu-west-1
     path = /tmp/
     db = tmp.db
@@ -223,6 +232,7 @@ func TestAwsSecretOnly(t *testing.T) {
     upload = 2
 
     [backup "test"]
+    vault = test
     region = eu-west-1
     path = /tmp/
     db = tmp.db
