@@ -54,8 +54,23 @@ func (a *archive) ensureTables() error {
  * AddFile adds a file to the archive
  */
 func (a *archive) AddFile(file *ArchivedFile) error {
-	// "INSERT INTO file(hash, filename, is_deleted) VALUES (?, ?, ?)"
-	// "INSERT OR IGNORE INTO upload(hash, amazon_id) VALUES(?, ?)"
+	stmt, err := a.conn.Prepare("INSERT INTO file(hash, filename, is_deleted) VALUES (?, ?, ?)")
+	if err != nil {
+		return err
+	}
+	_, err = stmt.Exec(file.Hash(), file.Filename(), false)
+	if err != nil {
+		return err
+	}
+
+	stmt, err = a.conn.Prepare("INSERT OR IGNORE INTO upload(hash, amazon_id) VALUES(?, ?)")
+	if err != nil {
+		return err
+	}
+	_, err = stmt.Exec(file.Hash(), file.AmazonId())
+	if err != nil {
+		return err
+	}
 
 	return nil
 }
@@ -63,27 +78,59 @@ func (a *archive) AddFile(file *ArchivedFile) error {
 /**
  * FindFileByFilename returns an ArchivedFile given a filename
  */
-func (a *archive) FindFileByFilename(filename string) *ArchivedFile {
-	// "SELECT f.hash, f.filename FROM file AS f INNER JOIN upload AS u ON a.hash=u.hash WHERE f.filename=? AND f.is_deleted=0"
+func (a *archive) FindFileByFilename(filename string) (*ArchivedFile, error) {
+	stmt, err := a.conn.Prepare("SELECT f.hash, f.filename, f.is_deleted, u.amazon_id FROM file AS f INNER JOIN upload AS u ON f.hash=u.hash WHERE f.filename=? AND f.is_deleted=0")
+	if err != nil {
+		return nil, err
+	}
 
-	return nil
+	var hash, fname, amazonId string
+	var isDeleted bool
+	err = stmt.QueryRow(filename).Scan(&hash, &fname, &isDeleted, &amazonId)
+	if err != nil {
+		return nil, err
+	}
+
+	return &ArchivedFile{
+		filename:  fname,
+		hash:      hash,
+		amazonId:  amazonId,
+		isDeleted: isDeleted,
+	}, nil
 }
 
 /**
  * FindAmazonIdByHash returns the amazon id of a given hash
- * If there is no such file known the function returns nil
+ * If there is no such file known the function returns an error
  */
-func (a *archive) FindAmazonIdByHash(hash string) *string {
-	// "SELECT amazon_id FROM upload WHERE hash=?"
+func (a *archive) FindAmazonIdByHash(hash string) (*string, error) {
+	stmt, err := a.conn.Prepare("SELECT amazon_id FROM upload WHERE hash=?")
+	if err != nil {
+		return nil, err
+	}
 
-	return nil
+	var amazonId string
+	err = stmt.QueryRow(hash).Scan(&amazonId)
+	if err != nil {
+		return nil, err
+	}
+
+	return &amazonId, nil
 }
 
 /**
  * DeleteFile marks a file as deleted
  */
 func (a *archive) DeleteFile(hash, filename string) error {
-	// "UPDATE file SET is_deleted=1 WHERE hash=? AND filename=?"
+	stmt, err := a.conn.Prepare("UPDATE file SET is_deleted=1 WHERE hash=? AND filename=?")
+	if err != nil {
+		return err
+	}
+
+	_, err = stmt.Exec(hash, filename)
+	if err != nil {
+		return err
+	}
 
 	return nil
 }
