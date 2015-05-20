@@ -66,6 +66,8 @@ func (a *archive) AddFile(file *ArchivedFile) error {
 	if err != nil {
 		return err
 	}
+	defer stmt.Close()
+
 	_, err = stmt.Exec(file.Hash(), file.Filename(), false)
 	if err != nil {
 		return err
@@ -88,6 +90,7 @@ func (a *archive) ListFiles() ([]*ArchivedFile, error) {
 	if err != nil {
 		return nil, err
 	}
+	defer stmt.Close()
 
 	rows, err := stmt.Query()
 	if err != nil {
@@ -118,6 +121,7 @@ func (a *archive) FindFileByFilename(filename string) (*ArchivedFile, error) {
 	if err != nil {
 		return nil, err
 	}
+	defer stmt.Close()
 
 	var hash, fname, amazonId string
 	var isDeleted bool
@@ -143,6 +147,7 @@ func (a *archive) FindAmazonIdByHash(hash string) (*string, error) {
 	if err != nil {
 		return nil, err
 	}
+	defer stmt.Close()
 
 	var amazonId string
 	err = stmt.QueryRow(hash).Scan(&amazonId)
@@ -161,6 +166,7 @@ func (a *archive) DeleteFile(hash, filename string) error {
 	if err != nil {
 		return err
 	}
+	defer stmt.Close()
 
 	_, err = stmt.Exec(hash, filename)
 	if err != nil {
